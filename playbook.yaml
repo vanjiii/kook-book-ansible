@@ -20,4 +20,4 @@
     - role: roles/app
       vars:
         repo_name: "vanjiii/kook-book-server"
-        branch_name: "feat-ansible"
+        branch_name: "master"

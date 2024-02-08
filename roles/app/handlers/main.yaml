@@ -1,0 +1,10 @@
+# this will be executed only on-demand
+# pritty much like hooks
+# example: on-change in repo/code, then restart server
+- name: curl-webserver
+  shell: "curl http://localhost:{{ app_port }}"
+
+- name: restart-webserver
+  systemd:
+    name: apache2
+    state: restarted

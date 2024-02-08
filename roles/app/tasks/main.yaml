@@ -1,0 +1,45 @@
+---
+- name: Main block
+  block:
+    - name: Create working directory
+      file:
+        dest: "{{ code_dir }}"
+        state: directory
+
+    - name: Get latest application code from Github
+      git:
+        repo: "git@github.com:{{ repo_name }}"
+        # tag, commit sha, branch name
+        version: "{{ branch_name }}"
+        dest: "{{ code_dir }}"
+      notify: # this will be executed only when this step has changes
+        - curl-webserver
+
+    - name: Install project deps
+      command: go mod download
+      args:
+        chdir: "{{ code_dir }}"
+      # for python it may look something like this
+      # pip:
+      #   chdir: code/ # it is relative path
+      #   requirements: "requirements.txt"
+      #   state: present
+
+    - name: Build the server
+      shell: "go build -o {{ root_dir}}/kook-book"
+      args:
+        chdir: "{{ code_dir }}"
+
+    - name: Run the server
+      shell: "{{ root_dir}}/kook-book serve --port {{ app_port }}"
+
+  rescue:
+    - name: Cleanup code dir
+      file:
+        dest: "{{ code_dir }}"
+        state: absent
+
+    - name: Cleanup executable
+      file:
+        dest: "{{ root_dir }}/kook-book"
+        state: absent

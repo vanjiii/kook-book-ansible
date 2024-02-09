@@ -15,6 +15,16 @@
   vars:
     app_port: "5002"
     root_dir: "~/tmp/kookbook"
+    username: "{{ username }}"
+    # username: "{{ lookup('hashi_vault', 'secrets/data/dev:username') }}"
+    # password: "{{ lookup('hashi_vault', 'secrets/data/dev:password') }}"
+
+  vars_files:
+    - secrets.yaml
+
+  tasks:
+    - debug: msg={{ username }}
+    - debug: msg={{ password }}
 
   roles:
     - role: roles/app
